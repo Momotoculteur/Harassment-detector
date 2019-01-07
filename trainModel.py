@@ -11,7 +11,10 @@ from keras import utils
 from keras.models import Sequential
 from keras.layers import Dense, Activation, Dropout
 from keras.optimizers import *
-
+import tensorflow as tf
+config = tf.ConfigProto()
+config.gpu_options.allow_growth = True
+session = tf.Session(config=config)
 
 # Lecture de notre dataset
 data = pd.read_csv('.\\dataset\\data.txt', sep=',', names=["text", "result"])
@@ -30,9 +33,9 @@ print(data['result'].value_counts())
 
 
 # Definition des callbacks
-early = EarlyStopping(monitor='val_loss', min_delta=0, patience=5, verbose=0, mode='auto')
+early = EarlyStopping(monitor='val_loss', min_delta=0, patience=2, verbose=0, mode='auto')
 check = ModelCheckpoint('.\\modelTrained\\model.hdf5', monitor='val_loss', verbose=0,save_best_only=True, save_weights_only=False, mode='auto')
-csv_logger = CSVLogger('.\\metrics\\log.csv', append=True, separator=',')
+csv_logger = CSVLogger('.\\metrics\\log.csv', append=False, separator=',')
 
 
 # Definition des jeux de train et test
