@@ -11,7 +11,8 @@ def cleanResultData():
     :return:
     '''
 
-data = pd.read_csv('dataset\\data.txt', sep=',', names=["text", "result"])
+data = pd.read_csv('dataset\\dataTest.txt', sep=',', names=["text", "result"])
+print(data['result'].value_counts())
 
 list = ['1','0']
 for index, row in data.iterrows():
@@ -22,4 +23,12 @@ for index, row in data.iterrows():
 
 
 print(data['result'].value_counts())
-data.to_csv('dataset\\data.txt', header=None, index=None, sep=',', mode='w')
+#data.to_csv('dataset\\dataTest.txt', header=None, index=None, sep=',', mode='w')
+
+
+
+if __name__ == "__main__":
+    """
+    # MAIN
+    """
+    cleanResultData()
