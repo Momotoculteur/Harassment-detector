@@ -3,6 +3,39 @@ import pandas as pd
 from sklearn.utils import shuffle
 
 
+def adaptDatasetTest():
+    '''
+    Permet de me cut un dataset de test equilibre et melange
+    :return:
+    '''
+
+data = pd.read_csv('.\\datasetTest\\dataTest.txt', sep=',', names=["text", "result"])
+print(data['result'].value_counts())
+
+max1 = 0
+max0 = 0
+
+list = ['1','0']
+for index, row in data.iterrows():
+    if row['result'] == 0:
+        if max0 < 50:
+            max0 = max0+1
+        else:
+            data.drop(index, inplace=True)
+    if row['result'] == 1:
+        if max1 < 50:
+            max1 = max1 + 1
+        else:
+            data.drop(index, inplace=True)
+        #data.drop(index,inplace=True)
+
+
+print(data['result'].value_counts())
+data = shuffle(data)
+#print(data['result'].value_counts())
+data.to_csv('datasetTest\\dataTest.txt', header=None, index=None, sep=',', mode='w')
+
+
 def cleanResultData():
     '''
     Je me suis rendu compte bien trop tard que dans mon dataset, j'avais des fois des soucis de crawl
@@ -11,7 +44,7 @@ def cleanResultData():
     :return:
     '''
 
-data = pd.read_csv('dataset\\dataTest.txt', sep=',', names=["text", "result"])
+data = pd.read_csv('datasetTest\\dataTest.txt', sep=',', names=["text", "result"])
 print(data['result'].value_counts())
 
 list = ['1','0']
@@ -23,8 +56,7 @@ for index, row in data.iterrows():
 
 
 print(data['result'].value_counts())
-#data.to_csv('dataset\\dataTest.txt', header=None, index=None, sep=',', mode='w')
-
+data.to_csv('datasetTest\\dataTest.txt', header=None, index=None, sep=',', mode='w')
 
 
 if __name__ == "__main__":
