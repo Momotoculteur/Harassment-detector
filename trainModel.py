@@ -11,6 +11,10 @@ from keras import utils
 from keras.models import Sequential
 from keras.layers import Dense, Activation, Dropout
 from keras.optimizers import *
+
+'''
+Permet d'attribuer l'allocation dynamique de mémoire pour éviter les depassements
+'''
 import tensorflow as tf
 config = tf.ConfigProto()
 config.gpu_options.allow_growth = True
