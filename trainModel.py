@@ -4,13 +4,13 @@ import keras
 from sklearn.utils import shuffle
 from keras.callbacks import CSVLogger
 from keras.callbacks import EarlyStopping, ModelCheckpoint
-from keras.preprocessing import text, sequence
-from sklearn.preprocessing import LabelBinarizer, LabelEncoder
+from keras.preprocessing import text
+from sklearn.preprocessing import LabelEncoder
 import numpy as np
 from keras import utils
 from keras.models import Sequential
 from keras.layers import Dense, Activation, Dropout
-from keras.optimizers import *
+
 
 '''
 Permet d'attribuer l'allocation dynamique de mémoire pour éviter les depassements
@@ -39,7 +39,7 @@ print(data['result'].value_counts())
 # Definition des callbacks
 early = EarlyStopping(monitor='val_loss', min_delta=0, patience=2, verbose=0, mode='auto')
 check = ModelCheckpoint('.\\modelTrained\\model.hdf5', monitor='val_loss', verbose=0,save_best_only=True, save_weights_only=False, mode='auto')
-csv_logger = CSVLogger('.\\metrics\\log.csv', append=False, separator=',')
+csvLogger = CSVLogger('.\\metrics\\log.csv', append=False, separator=',')
 
 
 # Definition des jeux de train et test
@@ -56,11 +56,10 @@ testResult = data['result'][trainSize:]
 # Fix des hyper parametres
 batch_size = 256
 epoch = 100
-max_words = 10000
-
+maxWords = 1000
 
 # Transforme le text vers une matrice de mot et permet de lui donnée un indice
-tokenize = text.Tokenizer(num_words=max_words, char_level=False)
+tokenize = text.Tokenizer(num_words=maxWords, char_level=False)
 tokenize.fit_on_texts(trainText)
 xTrain = tokenize.texts_to_matrix(trainText)
 xTest = tokenize.texts_to_matrix(testText)
@@ -71,9 +70,10 @@ encoder = LabelEncoder()
 encoder.fit(trainResult)
 yTrain = encoder.transform(trainResult)
 yTest = encoder.transform(testResult)
-num_classes = np.max(yTrain) + 1
-yTest = utils.to_categorical(yTest, num_classes)
-yTrain = utils.to_categorical(yTrain, num_classes)
+numClasses = np.max(yTrain) + 1
+
+yTest = utils.to_categorical(yTest, numClasses)
+yTrain = utils.to_categorical(yTrain, numClasses)
 
 
 # Shape de nos donnees avant entrainement
@@ -83,12 +83,14 @@ print('yTrain shape:', yTrain.shape)
 print('yTest shape:', yTest.shape)
 
 
+
+
 # Definition de notre modele
 model = Sequential()
-model.add(Dense(512, input_shape=(max_words,)))
+model.add(Dense(512, input_shape=(maxWords,)))
 model.add(Activation('relu'))
 model.add(Dropout(0.5))
-model.add(Dense(num_classes))
+model.add(Dense(numClasses))
 model.add(Activation('softmax'))
 
 
@@ -97,4 +99,4 @@ model.compile(loss='categorical_crossentropy',optimizer=keras.optimizers.Adamax(
 
 
 # Entrainement du modele
-train =  model.fit(xTrain, yTrain, epochs=epoch, callbacks = [csv_logger, early, check], batch_size=batch_size, validation_data=(xTest,yTest))
+train =  model.fit(xTrain, yTrain, epochs=epoch, callbacks = [csvLogger, early, check], batch_size=batch_size, validation_data=(xTest,yTest))
